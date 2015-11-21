@@ -1,0 +1,113 @@
+<style>
+  .row, .sq {
+    box-sizing: border-box;
+    position: relative;
+  }
+  .bg {
+    box-sizing: content-box;
+    border: solid 2px #666;
+    border-left: none;
+    width: 512px;
+    position: relative;
+    overflow: hidden;
+  }
+  /*.row {
+    border-top: solid 2px #666;
+  }
+  .row:nth-child(1) {
+    border-top: none;
+  }*/
+  .sq {
+    width: 64px;
+    height: 64px;
+    display: inline-block;
+    border-left: solid 2px #666;
+    border-top: solid 2px #666;
+    /*overflow: hidden;*/
+  }
+  .sq:nth-child(1) {
+    /*border-left: none;*/
+  }
+  .row:nth-child(1) .sq {
+    border-top: none;
+  }
+  .row.middle .sq {
+    border-left: none;
+  }
+  .row.middle .sq:nth-child(1) {
+    border-left: solid 2px #666;
+  }
+  .sq.cross:before {
+    content: '';
+    display: block;
+    position: absolute;
+    top: -2px;
+    left: -90px;
+    width: 181.01933598375618px;
+    height: 181.01933598375618px;
+    box-sizing: border-box;
+    border-top: solid 2px #666;
+    transform: rotate(45deg);
+    transform-origin: top center;
+  }
+  .sq.cross:after {
+    content: '';
+    display: block;
+    position: absolute;
+    top: -2px;
+    left: -93px;
+    width: 181.01933598375618px;
+    height: 181.01933598375618px;
+    box-sizing: border-box;
+    border-top: solid 2px #666;
+    transform: rotate(-45deg);
+    transform-origin: top center;
+  }
+  .mk {
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    margin-left: -8px;
+    margin-top: -8px;
+    box-shadow: 0 0 0 2px #666;
+  }
+</style>
+
+<div class="bg"></div>
+
+<script>
+  var bg = document.querySelector('.bg')
+  var sqs = []
+  for (var y = 0; y < 9; y++) {
+    var row = document.createElement('div')
+    row.classList.add('row')
+    sqs[y] = row
+    for (var x = 0; x < 8; x++) {
+      var sq = document.createElement('div')
+      sq.classList.add('sq')
+      sqs[y][x] = sq
+      row.appendChild(sq)
+    }
+    bg.appendChild(row)
+  }
+
+  var rows = document.querySelectorAll('.row')
+  rows[4].classList.add('middle')
+
+  sqs[1][4].classList.add('cross')
+  sqs[8][4].classList.add('cross')
+
+  var mks = [
+    [2, 1], [2, 7],
+    [3, 0], [3, 2], [3, 4], [3, 6], [3, 8],
+    [6, 0], [6, 2], [6, 4], [6, 6], [6, 8],
+    [7, 1], [7, 7]
+  ]
+  for (var i = 0; i < mks.length; i++) {
+    var mk = document.createElement('div')
+    mk.classList.add('mk')
+    mk.style.top = (mks[i][0] * 64+1) + 'px'
+    mk.style.left = (mks[i][1] * 64 +1 ) + 'px'
+    bg.appendChild(mk)
+  }
+</script>
