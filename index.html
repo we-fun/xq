@@ -1,15 +1,25 @@
+<meta charset="utf8">
+
+<link rel="stylesheet" href="kite.min.css">
+
 <style>
   .row, .sq {
     box-sizing: border-box;
     position: relative;
   }
+  .cont {
+    /*width: 512px;*/
+  }
   .bg {
     box-sizing: content-box;
     border: solid 2px #666;
     border-left: none;
-    width: 512px;
     position: relative;
     overflow: hidden;
+  }
+  .bg, .chs {
+    -webkit-user-select: none;
+    cursor: default;
   }
   /*.row {
     border-top: solid 2px #666;
@@ -71,9 +81,41 @@
     margin-top: -8px;
     box-shadow: 0 0 0 2px #666;
   }
+  .chs {
+    z-index: 1;
+    position: absolute;
+  }
+  .ch {
+    position: absolute;
+    cursor: pointer;
+    width: 48px;
+    height: 48px;
+    border-radius: 48px;
+    line-height: 48px;
+    text-align: center;
+    font-size: 24px;
+    margin-left: -24px;
+    margin-top: -24px;
+    vertical-align: middle;
+    background: wheat;
+    text-shadow: 0 0 1px;
+    box-shadow: 0 0 1px 1px rgba(0,0,0,.3);
+  }
+  .ch.green {
+    color: green;
+  }
+  .ch.red {
+    color: red;
+  }
 </style>
 
-<div class="bg"></div>
+<div class="kite kite--position">
+  <div class="kite__item cont">
+    <div class="chs"></div>
+    <div class="bg"></div>
+  </div>
+</div>
+
 
 <script>
   var bg = document.querySelector('.bg')
@@ -109,5 +151,36 @@
     mk.style.top = (mks[i][0] * 64+1) + 'px'
     mk.style.left = (mks[i][1] * 64 +1 ) + 'px'
     bg.appendChild(mk)
+  }
+
+  var chs = document.querySelector('.chs')
+  var chsArr = [
+    [1, '車', 0, 0], [1, '車', 0, 8],
+    [1, '马', 0, 1], [1, '马', 0, 7],
+    [1, '相', 0, 2], [1, '相', 0, 6],
+    [1, '仕', 0, 3], [1, '仕', 0, 5],
+    [1, '帅', 0, 4],
+    [1, '砲', 2, 1], [1, '砲', 2, 7],
+    [1, '兵', 3, 0], [1, '兵', 3, 2], [1, '兵', 3, 4], [1, '兵', 3, 6], [1, '兵', 3, 8],
+
+    [0, '車', 9, 0], [0, '車', 9, 8],
+    [0, '马', 9, 1], [0, '马', 9, 7],
+    [0, '象', 9, 2], [0, '象', 9, 6],
+    [0, '士', 9, 3], [0, '士', 9, 5],
+    [0, '将', 9, 4],
+    [0, '炮', 7, 1], [0, '炮', 7, 7],
+    [0, '卒', 6, 0], [0, '卒', 6, 2], [0, '卒', 6, 4], [0, '卒', 6, 6], [0, '卒', 6, 8]
+  ]
+  for (var i = 0; i < chsArr.length; i++) {
+    placeChess.apply(null, chsArr[i])
+  }
+
+  function placeChess(side, name, y, x){
+    var ch = document.createElement('span')
+    ch.textContent = name
+    ch.classList.add('ch', side ? 'red': 'green')
+    ch.style.top = (y * 64 + 1) + 'px'
+    ch.style.left = (x * 64 + 1) + 'px'
+    chs.appendChild(ch)
   }
 </script>
