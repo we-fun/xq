@@ -12,7 +12,7 @@
   }
   .bg {
     box-sizing: content-box;
-    border: solid 2px #666;
+    border: solid 4px #666;
     border-left: none;
     position: relative;
     overflow: hidden;
@@ -31,8 +31,8 @@
     width: 64px;
     height: 64px;
     display: inline-block;
-    border-left: solid 2px #666;
-    border-top: solid 2px #666;
+    border-left: solid 4px #666;
+    border-top: solid 4px #666;
     /*overflow: hidden;*/
   }
   .sq:nth-child(1) {
@@ -45,7 +45,7 @@
     border-left: none;
   }
   .row.middle .sq:nth-child(1) {
-    border-left: solid 2px #666;
+    border-left: solid 4px #666;
   }
   .sq.cross:before {
     content: '';
@@ -56,7 +56,7 @@
     width: 181.01933598375618px;
     height: 181.01933598375618px;
     box-sizing: border-box;
-    border-top: solid 2px #666;
+    border-top: solid 4px #666;
     transform: rotate(45deg);
     transform-origin: top center;
   }
@@ -69,7 +69,7 @@
     width: 181.01933598375618px;
     height: 181.01933598375618px;
     box-sizing: border-box;
-    border-top: solid 2px #666;
+    border-top: solid 4px #666;
     transform: rotate(-45deg);
     transform-origin: top center;
   }
@@ -79,7 +79,7 @@
     height: 16px;
     margin-left: -8px;
     margin-top: -8px;
-    box-shadow: 0 0 0 2px #666;
+    box-shadow: 0 0 0 4px #666;
   }
   .chs {
     z-index: 1;
@@ -87,15 +87,14 @@
   }
   .ch {
     position: absolute;
-    cursor: pointer;
-    width: 48px;
-    height: 48px;
-    border-radius: 48px;
-    line-height: 48px;
+    width: 52px;
+    height: 52px;
+    border-radius: 52px;
+    line-height: 52px;
     text-align: center;
-    font-size: 24px;
-    margin-left: -24px;
-    margin-top: -24px;
+    font-size: 32px;
+    margin-left: -26px;
+    margin-top: -26px;
     vertical-align: middle;
     background: wheat;
     text-shadow: 0 0 1px;
@@ -103,9 +102,13 @@
   }
   .ch.green {
     color: green;
+    cursor: pointer;
   }
   .ch.red {
     color: red;
+  }
+  .ch.active {
+    outline: dashed 2px orange;
   }
 </style>
 
@@ -118,6 +121,7 @@
 
 
 <script>
+  /// 绘制棋盘
   var bg = document.querySelector('.bg')
   var sqs = []
   for (var y = 0; y < 9; y++) {
@@ -148,11 +152,12 @@
   for (var i = 0; i < mks.length; i++) {
     var mk = document.createElement('div')
     mk.classList.add('mk')
-    mk.style.top = (mks[i][0] * 64+1) + 'px'
-    mk.style.left = (mks[i][1] * 64 +1 ) + 'px'
+    mk.style.top = (mks[i][0] * 64+2) + 'px'
+    mk.style.left = (mks[i][1] * 64 +2) + 'px'
     bg.appendChild(mk)
   }
 
+  /// 绘制棋子
   var chs = document.querySelector('.chs')
   var chsArr = [
     [1, '車', 0, 0], [1, '車', 0, 8],
@@ -172,15 +177,71 @@
     [0, '卒', 6, 0], [0, '卒', 6, 2], [0, '卒', 6, 4], [0, '卒', 6, 6], [0, '卒', 6, 8]
   ]
   for (var i = 0; i < chsArr.length; i++) {
-    placeChess.apply(null, chsArr[i])
+    placeChess.apply(null, chsArr[i].concat(i))
   }
 
-  function placeChess(side, name, y, x){
+  function placeChess(side, name, y, x, i){
     var ch = document.createElement('span')
     ch.textContent = name
     ch.classList.add('ch', side ? 'red': 'green')
-    ch.style.top = (y * 64 + 1) + 'px'
-    ch.style.left = (x * 64 + 1) + 'px'
+    ch.setAttribute('i', i)
+    ch.style.top = en(y) + 'px'
+    ch.style.left = en(x) + 'px'
     chs.appendChild(ch)
+  }
+  function en(n){
+    return n * 64 + 2
+  }
+  function de(v){
+    return (v - 2) / 64
+  }
+
+  /// 玩家走棋
+  var side = null
+  var done = null
+  var pick = null
+  var each = Array.prototype.forEach
+  document.addEventListener('mousedown', function(e){
+    e = e.originalEvent || e
+    if (side === 0) {
+      if (e.target.classList.contains('ch') &&
+        e.target.classList.contains('green')) {
+        each.call(chs.querySelectorAll('.ch'), function(ch){
+          ch.classList.remove('active')
+        })
+        e.target.classList.add('active')
+        pick = +e.target.getAttribute('i')
+        return
+      }
+      if (pick) {
+        var x = de(e.pageX - bg.offsetLeft)
+        var y = de(e.pageY - bg.offsetTop)
+        if (!(x >= 0 && x <=8 &&
+          y >= 0 && y <= 9)) return
+        if (Math.abs(Math.round(x) - x) > 0.3 ||
+          Math.abs(Math.round(y) - y) > 0.3) return
+        var ch = chs.querySelector(`[i="${pick}"]`)
+        ch.style.left = en(Math.round(x))
+        ch.style.top = en(Math.round(y))
+        done = pick
+        pick = null
+        nextTurn()
+        return
+      }
+    }
+  })
+
+  nextTurn()
+
+  function nextTurn(){
+    if (side == null) side = 1
+    else side = side ? 0 : 1
+    if (side === 1) {
+      // todo: AI
+      nextTurn()
+    } else {
+
+      
+    }
   }
 </script>
