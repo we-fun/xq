@@ -173,13 +173,13 @@
     [1, '砲', 2, 1], [1, '砲', 2, 7],
     [1, '兵', 3, 0], [1, '兵', 3, 2], [1, '兵', 3, 4], [1, '兵', 3, 6], [1, '兵', 3, 8],
 
-    [0, '車', 9, 0], [0, '車', 9, 8],
-    [0, '马', 9, 1], [0, '马', 9, 7],
-    [0, '象', 9, 2], [0, '象', 9, 6],
-    [0, '士', 9, 3], [0, '士', 9, 5],
-    [0, '将', 9, 4],
-    [0, '炮', 7, 1], [0, '炮', 7, 7],
-    [0, '卒', 6, 0], [0, '卒', 6, 2], [0, '卒', 6, 4], [0, '卒', 6, 6], [0, '卒', 6, 8]
+    [-1, '車', 9, 0], [-1, '車', 9, 8],
+    [-1, '马', 9, 1], [-1, '马', 9, 7],
+    [-1, '象', 9, 2], [-1, '象', 9, 6],
+    [-1, '士', 9, 3], [-1, '士', 9, 5],
+    [-1, '将', 9, 4],
+    [-1, '炮', 7, 1], [-1, '炮', 7, 7],
+    [-1, '卒', 6, 0], [-1, '卒', 6, 2], [-1, '卒', 6, 4], [-1, '卒', 6, 6], [-1, '卒', 6, 8]
   ]
   for (var i = 0; i < chsArr.length; i++) {
     placeChess.apply(null, chsArr[i].concat(i))
@@ -188,7 +188,7 @@
   function placeChess(side, name, y, x, i){
     var ch = document.createElement('span')
     ch.textContent = name
-    ch.classList.add('ch', side ? 'red': 'green')
+    ch.classList.add('ch', side > 0 ? 'red': 'green')
     ch.setAttribute('i', i)
     ch.style.top = en(y) + 'px'
     ch.style.left = en(x) + 'px'
@@ -209,19 +209,21 @@
   var abs = Math.abs
   var round = Math.round
   var chss = chs.querySelectorAll('.ch')
+  nextTurn()
+
   document.addEventListener('mousedown', function(e){
     e = e.originalEvent || e
-    // if (side === 0) {
+    // if (side < 0) {
       if (e.target.classList.contains('ch') &&
-        e.target.classList.contains(side ? 'red' : 'green')) {
-        each.call(chss, function(ch){
-          ch.classList.remove('active')
-        })
+        e.target.classList.contains(side > 0 ? 'red' : 'green')) {
+        if (pick[side] != null) {
+          chss[pick[side]].classList.remove('active')
+        }
         e.target.classList.add('active')
         pick[side] = +e.target.getAttribute('i')
         return
       }
-      if (pick[side]) {
+      if (pick[side] != null) {
         var x = de(e.pageX - bg.offsetLeft)
         var y = de(e.pageY - bg.offsetTop)
         if (!(x >= 0 && x <=8 &&
@@ -230,9 +232,10 @@
           abs(round(y) - y) > 0.3) return
         x = round(x)
         y = round(y)
-        if (!canGo(pick[side], x, y)) return
-        each.call(chsArr, function(c, i){
-          if (c[2] === y && c[3] === x) {
+        var c = chsArr[pick[side]]
+        if (!canGo(c, x, y)) return
+        chsArr.forEach(function(c, i){
+          if (!c.dead && c[2] === y && c[3] === x) {
             c.dead = true
             chss[i].style.display = 'none'
           }
@@ -240,9 +243,15 @@
         var ch = chss[pick[side]]
         ch.style.left = en(x)
         ch.style.top = en(y)
-        chsArr[pick[side]][2] = y
-        chsArr[pick[side]][3] = x
+        c[2] = y
+        c[3] = x
+        if (c[1] === '兵' || c[1] === '卒') {
+          if (side > 0 ? (c[2] >= 5) : (c[2] <= 4)) c.cross = true
+        }
         done[side] = pick[side]
+        if (done[-side] != null) {
+          chss[done[-side]].classList.remove('active')
+        }
         pick[side] = null
         nextTurn()
         return
@@ -250,49 +259,48 @@
     // }
   })
 
-  nextTurn()
-
   // 实时计算 cursor更新
-  function canGo(i, x, y){
-    let c = chsArr[i]
+  function canGo(c, x, y){
     // 不能吃右方 无需判断 因为点击即重新选取
     // if (chsArr.some(function(c1){
-    //   return c1[2] === y && c1[3] === x && c1[0] === c[0]
+    //   return !c1.dead && c1[2] === y && c1[3] === x && c1[0] === c[0]
     // })) return false
     let dx = x - c[3]
     let dy = y - c[2]
     if (c[1] === '兵' || c[1] === '卒') {
       if (c.cross && dy === 0 && abs(dx) === 1) return true
-      return dy === (c[0] ? 1 : -1)
+      return dx === 0 && dy === c[0]
     }
     if (c[1] === '帅' || c[1] === '将') {
       if (!(
-        c[0] ? (x >= 3 && x <= 5 && y >= 0 && y <= 2) :
+        c[0] > 0 ? (x >= 3 && x <= 5 && y >= 0 && y <= 2) :
           (x >= 3 && x <= 5 && y >= 7 && y <= 9)
         )) return false
       return abs(dx) + abs(dy) === 1
     }
     if (c[1] === '仕' || c[1] === '士') {
       if (!(
-        c[0] ? (x >= 3 && x <= 5 && y >= 0 && y <= 2) :
+        c[0] > 0 ? (x >= 3 && x <= 5 && y >= 0 && y <= 2) :
           (x >= 3 && x <= 5 && y >= 7 && y <= 9)
         )) return false
       return abs(dx) * abs(dy) === 1
     }
     if (c[1] === '相' || c[1] === '象') {
       if (!(
-        c[0] ? (x >= 0 && x <= 8 && y >= 0 && y <= 4) :
+        c[0] > 0 ? (x >= 0 && x <= 8 && y >= 0 && y <= 4) :
           (x >= 0 && x <= 8 && y >= 5 && y <= 9)
         )) return false
       if (chsArr.some(function(c1){
-        return c1[2] - c[2] === dy / 2 &&
+        return !c1.dead &&
+          c1[2] - c[2] === dy / 2 &&
           c1[3] - c[3] === dx / 2
       })) return false
       return abs(dx) === 2 && abs(dy) === 2
     }
     if (c[1] === '马') {
       if (chsArr.some(function(c1){
-        return c1[2] - c[2] === sign(dy) * (abs(dy)-1) &&
+        return !c1.dead &&
+          c1[2] - c[2] === sign(dy) * (abs(dy)-1) &&
           c1[3] - c[3] === sign(dx) * (abs(dx)-1)
       })) return false
       return abs(dx) * abs(dy) === 2
@@ -305,8 +313,8 @@
 
   function nextTurn(){
     if (side == null) side = 1
-    else side = side ? 0 : 1
-    if (side === 1) {
+    else side = -side
+    if (side > 0) {
       // todo: AI
       // setTimeout(function(){
       //   nextTurn()
