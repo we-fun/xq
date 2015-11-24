@@ -127,6 +127,7 @@
 <script>
   'use strict'
   /// 绘制棋盘
+  var cont = document.querySelector('.cont')
   var bg = document.querySelector('.bg')
   var sqs = []
   for (var y = 0; y < 9; y++) {
@@ -226,10 +227,10 @@
       if (pick[side] != null) {
         var x = de(e.pageX - bg.offsetLeft)
         var y = de(e.pageY - bg.offsetTop)
-        if (!(x >= 0 && x <=8 &&
-          y >= 0 && y <= 9)) return
-        if (abs(round(x) - x) > 0.3 ||
-          abs(round(y) - y) > 0.3) return
+        if (!(x >= -0.4 && x <= 8.4 &&
+          y >= -0.4 && y <= 9.4)) return
+        if (abs(round(x) - x) > 0.4 ||
+          abs(round(y) - y) > 0.4) return
         x = round(x)
         y = round(y)
         var c = chsArr[pick[side]]
@@ -304,6 +305,37 @@
           c1[3] - c[3] === sign(dx) * (abs(dx)-1)
       })) return false
       return abs(dx) * abs(dy) === 2
+    }
+    if (c[1] === '車') {
+      if (dx * dy !== 0) return false
+      var n = chsArr.reduce(function(m, c1){
+        var dx1 = (c1[3] - c[3]) / sign(dx)
+        var dy1 = (c1[2] - c[2]) / sign(dy)
+        var f = c1 !== c && !c1.dead && (
+          (dy && c1[3] === c[3] && dy1 < abs(dy) && dy1 > 0) ||
+          (dx && c1[2] === c[2] && dx1 < abs(dx) && dx1 > 0)
+          )
+        return f ? m+1 : m
+      }, 0)
+      return n === 0
+    }
+    if (c[1] === '砲' || c[1] === '炮') {
+      if (dx * dy !== 0) return false
+      var n = chsArr.reduce(function(m, c1){
+        var dx1 = (c1[3] - c[3]) / sign(dx)
+        var dy1 = (c1[2] - c[2]) / sign(dy)
+        var f = c1 !== c && !c1.dead && (
+          (dy && c1[3] === c[3] && dy1 < abs(dy) && dy1 > 0) ||
+          (dx && c1[2] === c[2] && dx1 < abs(dx) && dx1 > 0)
+          )
+        return f ? m+1 : m
+      }, 0)
+      if (chsArr.some(function(c1){
+        return !c1.dead && c1[2] === y && c1[3] === x
+      })) {
+        return n === 1
+      }
+      return n === 0
     }
   }
   function sign(v){
