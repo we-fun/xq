@@ -1,9 +1,26 @@
+
+
 .row, .sq {
   box-sizing: border-box;
   position: relative;
 }
+.cont-wrap {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  text-align: center;
+}
+.cont-wrap:after {
+  display: inline-block;
+  content: "";
+  height: 100%;
+  vertical-align: middle;
+}
 .cont {
-  /*width: 512px;*/
+  display: inline-block;
+  vertical-align: middle;
 }
 .bg {
   box-sizing: content-box;
@@ -15,6 +32,9 @@
 .bg, .chs {
   -webkit-user-select: none;
   cursor: default;
+}
+.row {
+  height: 64px;
 }
 /*.row {
   border-top: solid 2px #666;

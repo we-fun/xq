@@ -1,4 +1,6 @@
 import React, { Component } from 'react'
+import Bg from './Bg'
+import UnitSet from './UnitSet'
 
 export default class App extends Component {
 
@@ -6,10 +8,10 @@ export default class App extends Component {
     return (
       <div className="cont-wrap">
         <div className="cont">
-          <div className="chs"></div>
-          <div className="bg"></div>
+          <UnitSet />
+          <Bg />
         </div>
       </div>
-      )
+    )
   }
 }
