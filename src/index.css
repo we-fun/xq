@@ -1,0 +1,111 @@
+.row, .sq {
+  box-sizing: border-box;
+  position: relative;
+}
+.cont {
+  /*width: 512px;*/
+}
+.bg {
+  box-sizing: content-box;
+  border: solid 4px #666;
+  border-left: none;
+  position: relative;
+  overflow: hidden;
+}
+.bg, .chs {
+  -webkit-user-select: none;
+  cursor: default;
+}
+/*.row {
+  border-top: solid 2px #666;
+}
+.row:nth-child(1) {
+  border-top: none;
+}*/
+.sq {
+  width: 64px;
+  height: 64px;
+  display: inline-block;
+  border-left: solid 4px #666;
+  border-top: solid 4px #666;
+  /*overflow: hidden;*/
+}
+.sq:nth-child(1) {
+  /*border-left: none;*/
+}
+.row:nth-child(1) .sq {
+  border-top: none;
+}
+.row.middle .sq {
+  border-left: none;
+}
+.row.middle .sq:nth-child(1) {
+  border-left: solid 4px #666;
+}
+.sq.cross:before {
+  content: '';
+  display: block;
+  position: absolute;
+  top: -5px;
+  left: -93px;
+  width: 181.01933598375618px;
+  height: 181.01933598375618px;
+  box-sizing: border-box;
+  border-top: solid 4px #666;
+  transform: rotate(45deg);
+  transform-origin: top center;
+}
+.sq.cross:after {
+  content: '';
+  display: block;
+  position: absolute;
+  top: -4px;
+  left: -93px;
+  width: 181.01933598375618px;
+  height: 181.01933598375618px;
+  box-sizing: border-box;
+  border-top: solid 4px #666;
+  transform: rotate(-45deg);
+  transform-origin: top center;
+}
+.mk {
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  margin-left: -8px;
+  margin-top: -8px;
+  /*box-shadow: 0 0 0 4px #666;*/
+  outline: dotted 4px #666;
+}
+.chs {
+  z-index: 1;
+  position: absolute;
+}
+.ch {
+  position: absolute;
+  cursor: pointer;
+  width: 52px;
+  height: 52px;
+  border-radius: 52px;
+  line-height: 52px;
+  text-align: center;
+  font-size: 32px;
+  margin-left: -26px;
+  margin-top: -26px;
+  vertical-align: middle;
+  background: wheat;
+  text-shadow: 0 0 1px;
+  box-shadow: 0 0 1px 1px rgba(0,0,0,.3);
+}
+.ch.green {
+  color: green;
+}
+.ch.red {
+  color: red;
+}
+.ch.green.active {
+  outline: dashed 10px rgba(200, 250, 100, .4);
+}
+.ch.red.active {
+  outline: dashed 10px rgba(250, 180, 180, .4);
+}
