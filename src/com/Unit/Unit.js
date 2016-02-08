@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import cx from 'classnames'
+import { en } from '../../cpu/grid'
 
 export default class Unit extends Component {
 
@@ -19,8 +20,4 @@ export default class Unit extends Component {
       }}>{name}</span>
     )
   }
-}
-
-function en(n){
-  return n * 64 + 2
 }
