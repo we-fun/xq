@@ -1,0 +1,9 @@
+{
+  "main": "app",
+  "scripts": {
+    "start": "electron ."  
+  },
+  "devDependencies": {
+    "electron-prebuilt": "^0.37.6"
+  }
+}
