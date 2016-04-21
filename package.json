@@ -1,9 +1,13 @@
 {
+  "name": "xq",
+  "version": "0.0.0",
   "main": "app",
   "scripts": {
-    "start": "electron ."  
+    "release": "node release",
+    "start": "electron ."
   },
   "devDependencies": {
+    "electron-packager": "^7.0.0",
     "electron-prebuilt": "^0.37.6"
   }
 }
