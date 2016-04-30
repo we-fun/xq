@@ -1,7 +1,7 @@
 {
   "name": "xq",
   "version": "0.0.0",
-  "main": "app",
+  "main": "app/main",
   "scripts": {
     "release": "node release",
     "start": "electron ."
