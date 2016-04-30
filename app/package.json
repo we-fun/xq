@@ -1,4 +1,6 @@
 {
+  "name": "xq-react",
+  "version": "0.0.0",
   "main": "main.js",
   "dependencies": {
     "classnames": "^2.2.3",
